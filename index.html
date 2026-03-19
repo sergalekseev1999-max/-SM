@@ -89,12 +89,15 @@
       loadApp();
 
       // При сворачивании/разворачивании приложения обновляем страницу
+      // ОТКЛЮЧЕНО: чтобы не сбрасывалось состояние при переходе в заметки
+      /*
       document.addEventListener("visibilitychange", function() {
         if (!document.hidden) {
-          document.getElementById("loading").style.display = "flex"; // Возвращаем спиннер на долю секунды
+          document.getElementById("loading").style.display = "flex"; 
           loadApp();
         }
       });
+      */
     });
   </script>
 </body>
