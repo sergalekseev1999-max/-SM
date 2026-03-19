@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-  <!-- ✅ PWA — работает на GitHub Pages (без редиректов GAS) -->
+  <!-- ✅ PWA — полноэкранный режим без браузерных панелей -->
   <title>КТК</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,15 +14,13 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { height: 100%; }
-    body {
-      width: 100%; height: 100dvh;
+    html, body {
+      width: 100%; height: 100%;
       background: #09090b;
       overflow: hidden;
-      /* Чёрная полоска снизу — это home indicator. Убираем: */
-      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
+    /* Экран загрузки */
     #loading {
       position: fixed; inset: 0;
       display: flex; flex-direction: column;
@@ -42,26 +40,30 @@
     #loading p { font-size: 14px; color: #94a3b8; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /*
+      КЛЮЧЕВОЙ FIX: iframe через position:fixed
+      — top:0, left:0, right:0, bottom: высота home indicator
+      — это гарантирует что iframe НЕ заходит за нижнюю safe area
+      — никакой чёрной полосы снизу, никаких проблем с height:100%
+    */
     iframe {
-      width: 100%; height: 100%;
-      border: none; display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: env(safe-area-inset-bottom, 0px);
+      width: 100%;
+      border: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Экран загрузки -->
   <div id="loading">
     <div class="spinner"></div>
     <p>Загрузка КТК...</p>
   </div>
 
-  <!--
-    ════════════════════════════════════════════
-    👇 ВСТАВЬ СЮДА СВОЮ ССЫЛКУ НА GAS ПРИЛОЖЕНИЕ
-       (вида: https://script.google.com/macros/s/ТВО_ID/exec)
-    ════════════════════════════════════════════
-  -->
   <iframe
     id="app"
     src="https://script.google.com/macros/s/AKfycbx-KXBk32hO36fMYV8SjdLF6mazf59prTwVuUSEg6zZ3wexAgrNG1sS_ZcxZ8DbzEYIUw/exec"
@@ -71,3 +73,4 @@
 
 </body>
 </html>
+
