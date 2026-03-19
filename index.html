@@ -9,6 +9,9 @@
   <meta name="apple-mobile-web-app-title" content="КТК">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#09090b">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <style>
     * { margin: 0; padding: 0; }
     html, body {
@@ -59,6 +62,13 @@
       };
       
       iframe.src = baseUrl + "?t=" + Date.now();
+      
+      // Когда PWA возвращается из фона — перезагружаем iframe с новой меткой
+      document.addEventListener("visibilitychange", function() {
+        if (!document.hidden) {
+          iframe.src = baseUrl + "?t=" + Date.now();
+        }
+      });
     });
   </script>
 </body>
