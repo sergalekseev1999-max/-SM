@@ -1,0 +1,15 @@
+{
+  "name": "КТК Panel",
+  "short_name": "КТК",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/parakeet/512/shipping-container.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
