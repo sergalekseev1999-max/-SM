@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ФОРМА SM</title>
+  
+  <!-- Подключаем манифест для PWA. Это уберет адресную строку Safari -->
+  <link rel="manifest" href="manifest.json">
+  
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ФОРМА SM">
+  <meta name="theme-color" content="#09090b">
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #09090b;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    /* Защитный слой для безопасных зон iOS (Чёлка и низ) */
+    .safe-wrapper {
+      width: 100vw; height: 100vh;
+      padding-top: env(safe-area-inset-top, 20px);
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Делаем спиннер по центру */
+    #loading {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at top, #1e1b4b, #09090b);
+      color: #e2e8f0;
+      z-index: 10;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(139,92,246,0.3);
+      border-top-color: #8b5cf6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    #loading p { font-size: 14px; color: #94a3b8; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <div class="safe-wrapper">
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Загрузка последней версии ФОРМА SM...</p>
+    </div>
+    
+    <!-- Главный iframe (окно в GAS) -->
+    <iframe id="app" allow="camera; microphone; clipboard-read; clipboard-write" style="flex:1; width:100%; border:none; display:block;"></iframe>
+  </div>
+
+  <script>
+    // 1. УБИЙЦА КЕША iOS: Регистрируем Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('SW зарегистрирован. Кеш под контролем.');
+            registration.update(); // Всегда проверяем новую версию
+          })
+          .catch(err => console.log('Подключение SW провалилось:', err));
+      });
+    }
+
+    // 2. ЗАГРУЗКА ПРИЛОЖЕНИЯ
+    document.addEventListener("DOMContentLoaded", function () {
+      var iframe = document.getElementById("app");
+      // Ссылка EXEC для реальных пользователей
+      var baseUrl = "https://script.google.com/macros/s/AKfycbxHVyFgnmm6lMtJJ-les9s9vukIc08OJiWjZErnWNcOzXoqMuDf0DlWAzlXRkRuNIQvVw/exec";
+      
+      iframe.onload = function() {
+        document.getElementById("loading").style.display = "none";
+      };
+
+      // Функция загрузки iframe с таймстампом
+      function loadApp() {
+        iframe.src = baseUrl + "?nocache=" + Date.now();
+      }
+      
+      loadApp();
+
+      // При сворачивании/разворачивании приложения обновляем страницу
+      // ОТКЛЮЧЕНО: чтобы не сбрасывалось состояние при переходе в заметки
+      /*
+      document.addEventListener("visibilitychange", function() {
+        if (!document.hidden) {
+          document.getElementById("loading").style.display = "flex"; 
+          loadApp();
+        }
+      });
+      */
+    });
+  </script>
+</body>
+</html>
